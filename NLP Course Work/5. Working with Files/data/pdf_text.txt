@@ -1,0 +1,950 @@
+Lkit: A Toolkit for Natua ral La ngua ge Interface Construction 
+2. Natural Language Processing (NLP) 
+This section provides a br ief histor y of NLP, in troduces so me of t he main problem s involved  
+in extracting meaning from hu man lan guages a nd exa mines the kind of activities perfor med 
+by NLP s ystems. 
+ 
+ 
+2.1. Background 
+Natural language processing s ystem s take strings  of words  (sentences) as their input and 
+produce struc tured representations capturing the meaning of those strings as their output. The  
+nature of this  outp ut depends heavil y on the task at hand. A natural language understandin g 
+system  serving as an interf ace to a dat abase might accept questions in English w hich relate t o 
+the kind of data held by  the databas e. In this case  the meaning  of the input (the output of the 
+system ) might be expressed  in terms of structured SQL queries which c an be directly 
+subm itted to the database. 
+ 
+The first use of com puters to m anipulate natura l languages was in the 195 0s with attem pts to 
+automate tr anslation between Russi an and E nglish [ Locke & Booth] . These sy stem s were 
+specta cularly unsuccessful requiring human Ru ssian-English translators to pre-edit the  
+Russian and post-edit the English. Based on World War II code breaking tec hniques, the y 
+took i ndivi dual words in is olation and checked their definition i n a dictionar y. They were of 
+little practical  use. Popular tales about these system s cite many  mis-translations including t he 
+phrase " hydraulic ram " translated as " water goat ". 
+ 
+In the 1960s natural language processin g system s started to exam ine sentence structure but 
+often in an ad hoc m anner. These sy stems were based on pattern matching and few derive d 
+representatio ns of m eaning. The m ost well known of these is Eliza [ Weisenbau m] though t his 
+system  was n ot the m ost impressive in terms of its abilit y to extract meaning fr om language.  
+ 
+Serious developm ents in natu ral language processing took place in the early  & mid 1970s as 
+systems start ed to use m ore general ap proaches and atte mpt to for mally describe the rules of  
+the language they  worked  with. LUNAR [Woods  1973]  provided an English interface to a 
+database holding details of m oon roc k sam ples. SHRDLU [Winograd]  inter faced with a 
+virtual robot in a world of blocks, accepting English co mmands t o move the blocks around  
+and answer questions about the state of the wo rld. Since that time there has  been parallel 
+developm ent of ideas and technologies that provi de the basis for modern natural language 
+processing sy stem s. Research in co mputer linguist ics has provided greater knowledge of  
+grammar con struction [ Gazdar]  and Artificial Intelli gence res earchers have produced m ore 
+effective mechanism s for parsing natur al languages and for representing mean ings [ Allen]. 
+Natural lang uage processi ng sy stem s now build on a solid base of linguistic study  and us e 
+highly developed se mantic representatio ns. 
+ 
+Recently  (during the 1990s) natura l language sy stem s have either focused on specific, li mited 
+domains with  som e success or attem pted to  provide general purp ose language understandin g 
+ability with less success. A major goal in contem porary language processing research is to 
+produce s ystems which wo rk with com plete th reads o f discourse (with hum an like abilities) 
+rather than only  with isolated sentenc es [Russell & Norvig(a) ]. Success es in  this area are 
+currently  limited. 
+ 
+ 
+ 
+ 1 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+ 
+2.2. Problems 
+Two problems in particular m ake the pro cessing of  natural l anguages dif ficult and cause 
+different tech niques to be used than those as sociated with the construction of com pilers et c for 
+processing ar tificial languages. These problem s are (i) the level  of am biguity  that exists in  
+natural languages and (ii) the com plexity of semantic inform ation  contained in even sim ple 
+sentences.  
+ 
+Typically language processors deal with larg e num bers of words, m any of which have 
+alternative uses, and large grammars wh ich allo w different phrase types to be formed from  the 
+same string of words. Language pr ocessors ar e made more complex because of the 
+irregularity  of language and the different kinds of ambiguit y which  can occur. The groups of 
+sentences below are used as ex ampl es to illustrate different issues f aced by language 
+processors. Each group is briefly discussed in the following secti on (in keeping with 
+convention, il l-formed sent ences are marked with an asterix). 
+ 
+1.  The old ma n the boat s. 
+ 
+2.  Cats play with s tring. 
+ * Cat play with string. 
+ 
+3.  I saw the raci ng pige ons flying to Paris.  
+  I saw the Eiffel Tower flying to Paris . 
+ 
+4.  The boy ki cked the ball un der the tre e. 
+  The boy ki cked the wall u nder the tree.  
+ 
+ 
+1. In the sentence "The old man the boats" pr oblem s, such as they  are, exist bec ause the  
+word "old" can be legitimately  used as a noun (m eaning a collection of old people) as 
+well a s an adjective, and t he word " man" can be use d as a  verb ( meaning take  charge  
+of) as well as a noun. Th is causes ambiguit y which m ust be resolved durin g synta x 
+analy sis. Thi s is done by considering a ll possible s yntactic arran gements for phrases 
+and sub-phras es when nece ssary .  
+ 
+The im plication here is th at any  parsing mechanis m must be  able to explore various  
+syntactic arrange ments f or phrases and be able to backtrack and rearrange the m 
+whenever nec essary . 
+ 
+ 2 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+2. The problem with the second sentence in  this group is that there is no n umeric 
+agreement between the subject and the verb ( one is a singular for m, the other plural). 
+Grammar s must be expressive enough to specify  checks for such anomalies and also  
+specify  actions which should take place if they  occur. Mechanisms to signal failure in 
+processing such cases are useful. For exa mple, when co mbining sem antics for 
+"colourless" and "green" in a phrase like "the  colourless green c ar" a signal of failure 
+marks a sub-phrase as ill- formed and prevents it bei ng considered any  further. In the 
+case of proble ms with the numeric agre ement betw een subject and verb it may be more 
+appropriate to signal a warning. A warning m arks a sub-phrase as potentially-flawed 
+but d oes not r eject it outright. 
+ 
+3. Assu ming these sentenc es are taken in isola tion so there is no previous dialog whic h 
+introduces a racing pigeon named  "the Eiffel Tower" ... 
+ 
+The sensible way to interp ret the meaning of  the second sentence is "While I was fly ing 
+to Paris I saw the Eiffel Tower in its usual position -  firmly rooted t o the gr ound". What 
+prevents the second sentence being restructur ed in the same way  as the first is the  
+inconsistency with objects like t he Eif fel Tower and activities l ike flight . Sensible 
+semantic rules m ust dete ct this incons istency  and perhaps halt progress on any sub-
+phrase which i mplies the Ei ffel Tower is involved in a flying activit y. 
+ 
+A semantic r ule in this case might reaso n as follows: 
+(i) the set of objects c apable of flight is {humans, birds, bats, aeroplanes} 
+(ii) the Eiffel Tower is define d as a structural-object 
+(iii) structural-objects are not in the set of ob jects capabl e of flight so signal "ill-for med 
+semantics" an d halt progress on this rule. 
+ 
+4. The i mplicati on in the first sentence i s that the activity  performed by  the boy  causes th e 
+ball to move to a position which is under the tree. The kicking activit y has a meaning of  
+"move, using the boy's foot as an  instr ument  to cause that m ovement". In the second 
+sentence the wall is assu med not to h ave changed position. T he activity  whi ch took 
+place was one of "strike, using the  foot as an  instrument". The apparent disa mbiguation 
+in this case can take place if it is know n that balls are mobile obj ects (and are often 
+moved using a foot as an instrument) and walls are st atic objects. 
+ 
+ 
+The purpose of exam ining exam ple sentences like the four above are to introduce the reader  
+to some of the co mplexity  that occurs with in natur al language statements. The following  
+subsections describe the type of activities ca rried out by s ystems which process natural  
+language and therefore have to deal with problem s similar to those illustrated above. 
+ 
+ 
+ 
+ 3 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+2.3. Natural Language Processing - th e tasks involved 
+A simplified view of Natural Language Processing em phasises four distinct stages [ Fig 2.1 ]. 
+In real sy stems the se stages rar ely all occu r as separated, s equential processes. In th e 
+overview that follows it is assumed that sy ntactic analy sis and semantic analy sis will be dealt 
+with by  the sa me mechani sm - the p arser. The rest of this section examines process es shown 
+in the diagra m. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ input 
+sente nce 
+syntax 
+analysi s 
+(parsing) 
+semantic 
+analysi s 
+pragmatic 
+analysi s 
+target 
+representatio n gram mar lexicon 
+semantic 
+rules 
+contextual 
+information morphological 
+processing 
+Fig. 2. 1. The logical steps in Natural language Processing  
+ 
+ 
+ 
+ 
+ 4 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+2.3.1. Morphological Processing 
+The preli minary  stage which takes pl ace before sy ntax analy sis is morphologic al processing . 
+ 
+The purpose of this stage of language processing is  to break strings of language input into set s 
+of tokens cor responding  to discrete words, sub-word s and pu nctuation form s. For exam ple a 
+word like "u nhappil y" can be broken i nto three sub-word to kens as: 
+ un- happ y -ly 
+ 
+Morphol ogy is concerned primarily  with recognising how base words have been modified to 
+form  other words with si milar meanings but often with different sy ntactic categories. 
+Modification t ypicall y occurs by  the addition of  prefixes and/or postfixes but other text ual 
+changes can  also take place. In general th ere ar e three diffe rent case s of word form 
+modification.  
+ 
+Inflection:  textual repres entations of words change  because of  their s yntactic roles. In 
+English, for exam ple, most plural nou ns ta ke -s as a suffix (an d may  requir e other 
+modific ation), com parative and superlative for ms of regular adjectives take  -er -est 
+suffixes. 
+ 
+Derivation:  new words are derived fro m existing words. This manufacturing of words often 
+occurs in a regular m anner allowing fol lowing clear m orphological rules. For e xample, 
+in Engl ish s ome adjectiv es take -ness as a suffix when being used to create nouns  
+(happy  → happiness). The  sam e principles apply in most hum an languages though the 
+rules are diffe rent1. 
+ 
+Compounding:  new words are formed b y grouping existing words. This occurs infrequently  
+in English (exa mples incl ude "headache" and "tooth paste") but is widely  used in other  
+languages where it is morphologicall y possible to hav e infinitel y long words. 
+ 
+The nature of m orphological processing is heavily  dependent on the language being anal ysed. 
+In som e languages single words (used as verbs) contain all the in formation about the tense, 
+person and n umber of a sentence. In other la nguages this information may  be spread acros s 
+many  words. For exam ple the English s entence "I will have been walking..." w here co mplex 
+tense information is onl y available by exam ining the structur e of auxiliar y verbs. S ome 
+languages attach prefixes/ suffixes to nouns to indic ate their roles (see figure 2.2) others u se 
+word inflections to pr ovide proxim ity inform ation (see figures 2.3 & 2.4). 
+ 
+ 
+Noun + Suffix Syntactic case Meaning 
+Chennai-ukk u dative: destination To Madras 
+Chennai-ukk u-irund u dative: source From  Madras 
+Chennai-le containment In Madras 
+Chennai-ai object (forma l) Madras 
+Fig. 2. 2. Suff ix Attach ment for Noun Ca ses (For mal Tam il) 
+NB: the spellings used are the author' s phonetic spellings. 
+ 
+ 
+                                                      
+1 In Tam il new verbs can  be created  by using equivalent English  verbs, i n their infinitive form with out 
+"to", with a complex but  regular su ffix containing tense and person information. In Setswana nouns 
+like "student" and "teache r" are derive d from  the ve rbs "study" a nd "teac h"  by using m o- as a prefix 
+(notice "student" and "teache r" are als o derived from  "study" and "teach"  in E nglish, "tea cher"  is a 
+regular derivation, "student" is irregular). 
+ 5 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+ 
+ 
+Proximity Time Things (inanimate) 
+Near i-ppa (this ti me: now) i-ndtha (this t hing: this) 
+Far a-ppa (that time: then) a-ndtha (that thing: that) 
+Question e-ppa (what time: when ) e-ndtha (what thing: which) 
+Fig. 2. 3. Proxi mity Information as Prefix Tags (Tam il) 
+ 
+ 
+ 
+ 
+ 
+Proximity Cow Student 
+Near Speaker kgom o e     (this cow) mo-ithuti y o     (this studen t) 
+Near Listener kgom o e-o  (that cow) mo-ithuti y o-o  (that stude nt) 
+Far kgom o e-le  (that cow) mo-ithuti y o-le  (that student) 
+Fig. 2. 4. Proximity Information b y Dem ostrative Prono un Inflection 
+(Setswana) 
+ 
+ 
+ 
+ 
+As a language, English is  more easy to tokeni se and appl y morphological analy sis to t han 
+many . In some far- eastern languages words are not separated ( by whitespace charact ers) in 
+their written form  (examples include Japan ese and som e Chinese languages). In m any 
+languages the morpholog y of words can  be am biguous in way s that can only  be resolved by 
+carry ing o ut syntactic and/or semantic analy sis on t he input. Si mple examples in English 
+occur between pl ural no uns and sing ular verbs: "cli mbs" as in ' there are many climbs in the  
+Alps' or 'he climbs Eve rest in March '. This exa mple of ambiguity  can be resolv ed by  syntax 
+analy sis alone but other examples ar e more co mplex. "Und oable" could  be analy sed as  
+((un-do) -able ) or as (un- (do-able)), am biguity which cannot alway s be resolved at the sy ntax 
+level alone. 
+ 
+The output fr om the morphological processing phase is a string of  tokens whic h can then be 
+used for lexicon lookup. These tokens may contain tense, num ber, gender and proxim ity 
+inform ation (depending  on the lang uage) a nd in s ome cas es may also contain additiona l 
+syntactic infor mation for the parser. The next stage of processing is sy ntax analy sis. 
+ 
+ 
+ 6 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+2.3.2. Syntax and Semantics 
+A language processor must carry out  a number of di fferent functions prim arily based around 
+syntax analy sis and se mantic analy sis. The purpo se of syntax ana lysis is two-f old: to check  
+that a string of words (a se ntence) is w ell-formed  and to break it up into a structure that show s 
+the s yntactic relationships between the different  words. A s yntactic analy ser (or parser) does 
+this using  a dictionar y of word  defi nitions (t he lexicon) and  a set of s yntax rules (t he 
+grammar). A sim ple lexic on only contains th e syntactic cat egory of each word, a  sim ple 
+grammar describes rules which indicate only how syntactic cate gories can be  com bined t o 
+form  phrases of different t ypes. 
+ 
+Exam ples of a sim ple lexicon and grammar could be: 
+ 
+ Lexicon  Gram mar 
+ word categ ory   
+ cat Noun  Senten ce → NounPhrase, VerbPhras e2
+ chased Verb  VerbPhras e → Verb, NounPhras e 
+ large Adjective  NounPhrase → Article, No un 
+ rat Noun  NounPhrase → Artic le, Adjec tive, Noun 
+ the Article   
+ 
+This gra mma r-lexicon com bination co uld destructure the senten ce "The large  cat chased t he 
+rat" as follows: 
+ 
+the large cat chased the rat 
+      
+Article Adjective Noun Verb Article Noun 
+      
+ NounPhrase   NounPhrase  
+      
+   VerbPhras e   
+      
+  Senten ce    
+ 
+ 
+Often the task of a langua ge processor is to an alyse a sentence in a language li ke English and  
+produce an expression in some formal notation which, as far a s the com puter sy stem  is 
+concerned, c oncisely  expresse s the semantics  of the sentence.  An interfac e to a databa se 
+might, for exam ple, requir e a language processor to convert sentences in English or Ger man 
+into SQL queries. Semant ic analy sis is the te rm given to the pro duction of t his form alised  
+semantic repr esentation. 
+ 
+In order to c arry out semantic analy sis the le xicon must be expanded to incl ude sem antic 
+definitions fo r each word it contains an d the grammar must be extended to specify  how th e 
+semantics of any phrase ar e formed from  the se mant ics of its com ponent parts. For exam ple 
+the grammar rule above VerbPhrase → Verb, No unPhrase  states how the syntactic group 
+called VerbPhrase  is formed fro m other sy ntactic gro ups but say s nothin g about  the semantic s 
+of any  resulting VerbPhrase . Using a sim plified form of logic th e grammar and lexicon can be 
+expanded to c apture so me semantic information.  This is illustrated in the followi ng exam ple. 
+ 
+                                                      
+2 This no tation is u sed to describe the fact t hat a Sentence composed of a NounPhrase followed by a 
+VerbP hrase. 
+ 7 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+ 
+ Lexicon  
+ word category semantics 
+ cat Noun lx • feline( x ) 
+ chased Verb lxy • x L y L 
+         chased( x, y ) 
+ large Adjective lx • largesize( x ) 
+ rat Noun lx • rode nt( x ) 
+ the Article E1 „gensymÒ 
+NB: ter ms like "feline" and "chased" are used in  this e xample as pri mitive seman tic relations. 
+ 
+ 
+ 
+ Grammar  
+ Syntactic rule Semantic rule 
+  
+Senten ce → NounPhrase, VerbPhras e  
+apply VerbP hrase (NP) 
+ VerbPhras e → Verb, NounPhras e apply Verb (NounPh rase) 
+ NounPhrase → Article, No un apply No un (Article ) 
+ NounPhrase → Article, Adj ective, Nou nPhrase apply Adje ctive (Article ) L  
+ apply No un (Article ) 
+ 
+NB: the above is sim plified for readability, appl y is used to provi de an argu ment to a l form  
+so: apply lx • rodent( x  )(  Ralf ) → rodent( Ralf )  
+ 
+ 
+ 
+ 
+ 
+the large cat chased the rat 
+      
+Article Adjective Noun Verb Article Noun 
+      
+ 
+NounPhrase 
+E1s1 Ælarge(s 1) L feline(s 1)  NounPhrase 
+E1s2 Ærodent(s 2) 
+      
+ 
+ VerbPhrase 
+lx • x L (E1s2 Ærodent(s 2)) 
+              L chased( x, s2 ) 
+      
+ 
+Senten ce 
+(E1s1 Ælarge(s 1) L feline(s 1)) 
+L (E1s2 Ærodent(s 2)) 
+    L chase d(s1, s2 ) 
+ 
+Syntactic and semantic structures produ ced on analy sing a sim ple sentence. 
+ 
+ 
+The exam ple above dem onstrates how grammar rules are used to specify  the m ethod for  
+producing semantic for ms. The rule descr ibing the le gal syntactic form  for a VerbPhrase , for 
+example, also  describes how to create s emanti cs for verb phrases. In this way semantics are 
+formed and grouped int o larger sub-phra ses until, after appl ying all of the relevant rules, a 
+semantic expression descri bing the whol e sentence i s produced. 
+ 8 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+2.3.3. Semantics and Pragmatics 
+After se mant ic analy sis the next stage of pr ocessing deals with pragmatics. Unfortunately 
+there is no universally  agreed distinction be tween semantics and pragmatics. T his docum ent, 
+in comm on w ith several other authors [Russel & Nor vig(c) ] makes the distinction as follows: 
+semantic ana lysis associat es meaning with isol ated utterances/s entences; prag matic analy sis 
+interprets the results of sem antic analysis from  the perspective  of a specifi c context (the  
+context of t he dialogue or  state of the world etc). This means that with a sentence like " The 
+large cat chased the rat " semantic anal ysis can produce an expression which m eans the large 
+cat but cannot carry  out the further step of infe rence required to ide ntify the large cat as F elix. 
+This would be left up to prag matic anal ysis. In som e cases, like the ex ample just described,  
+pragmatic analy sis simply fits actual  objects/events  which exist in a given context with objec t 
+referenc es o btained during se mantic analy sis. In other cas es prag matic  analy sis ca n 
+disam biguate sentences which cannot be full y disambiguated duri ng the s yntax and semanti c 
+analy sis phases. As an ex ample consid er the senten ce "Put the apple in the basket on the 
+shelf ". There are two semantic interpretations for this sentence. U sing a form  of logic for the 
+semantics: 
+ 
+1. put the apple which is currently in the basket onto the  shelf 
+ 
+ ( E1 a : apple  ÆE b : basket  L  inside ( a, b ) )  L  E1 s : shelf  ﬁ  puton( a, s ) 
+ 
+2. put the apple into the baske t which is currently  on the shelf 
+ 
+ E1 a : apple  L  ( E1 b : basket  ÆE 1 s : shelf  L  on( b, s ) )  ﬁ  putin( a, b )  
+ 
+Pragmatic analy sis, in consulting the  curre nt context, could choose between the two 
+possibilities above based on the states and pos itions of objects in t he world of discourse. 
+ 
+ 
+2.4. Section Summary 
+This section has provided exam ples of some of the pr oblems as sociated with an alysing human 
+languages and has describ ed the most important stages in Natural Language Processing. The 
+next section exam ines the different approaches th at can be used to specify gra mmars and 
+lexicons. The specification  of a grammar and le xicon for even a  small subset  of a natural 
+language is a non-trivial activity. The correctness /integrity  of the grammar and  lexicon are of  
+great im portance since their use underpi ns all sy ntacti c and sem antic analy sis. 
+ 9 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+3. Specifying Grammars for Natural Languages 
+The single most im portant consideration f or the design of  Lkit concerned the t ypes of 
+grammar the toolkit would accept. This section gi ves a brief overview of the various ty pes of 
+grammar most commonly  used to specify na tural languages for co mputer-based analy sis. 
+ 
+All gra mmars  perfor m similar tasks, the y specify  a set of rules which work together to define 
+legal sentences in their language. Context free gr ammars (like BNF) are the easiest for people 
+to write and are easy  to dea l with com putationally. However natural  hum an languages are not  
+context free. Most grammar formalis ms draw a com promise by writing rules in a context free  
+style then augmenting these rules to d eal with  the kind of complications discussed e arlier 
+(num eric agre ement, handling semantics etc). 
+ 
+There are a variety of different approac hes used for gra mmar con struction and specific ation 
+but it is useful to exam ine the use of any  grammar in two way s: 
+1. as a conceptual design tool - a strategy for cap turing and describing the com plexity of a 
+natural language; 
+2. as a formal  notation for describing the syntactic (and possibly som e semantic)  
+characteristics of a languag e in a wa y that can be used b y a parser. 
+ 
+The first of these categories is concerned prim arily with the theor y and structure of languages,  
+the second is concerned  with the descripti on and im plement ation of grammars. The 
+relationship between the conceptual design of a grammar and the not ation used to 
+specify /code it is sim ilar to the relationship be tween the conceptual design of a  program  and 
+the programming langua ge used to write it. In this analog y the parser is sim ilar to an 
+interpreter or co mpiler that recognises the programmi ng language 
+ 
+Unfortunately it is im possible to completely  separate the theoretical/conc eptual design of a 
+grammar from  issues of implementati on. Differe nt conceptual designs of  grammar place 
+different requirem ents on the notations t hat may  be used to code t hem. Additionally different 
+notations have different representational capab ilities and m ay therefore restri ct conceptual  
+designs they can describ e. Cas e Gramma rs, fo r example, are mainly  conc erned with the  
+theoretical structure of a language and  can be im plemented b y diffe rent parsers using different 
+notations for grammar rules. However Case Gr ammars influence the choice of notation used 
+to describe them  since some grammatical notations cannot a dequately represent them. 
+Conversely  notations based on Context Free Gra mmars (like Recursive Transition Networks) 
+impose sever e constraints on the conceptual design of  grammars which the y describe. 
+ 
+The rest of this section describes vari ous ty pes of grammar indicating, where appropriate, 
+their requirements and/or restrictions. 
+ 10 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+3.1. Case Gramm ars 
+ 
+Case  Grammars [Fillmore] atte mpt to de scribe an y given sentence in term s of a fixed frame of  
+slots (called cases) which explicitly capture in form ation about  any activities described in the 
+sentence, the instigators of those activiti es, positions, tim es, etc. Though there is no 
+universally  agreed set of cases or their na mes a co mmon subset is outlined below . 
+ 
+ 
+Case Meaning 
+Action the action which takes pl ace (u sually rel ated to the main verb of a 
+sente nce) 
+Actor the instigato r of the acti on (often an anim ate entity which/who 
+does the acti on) 
+Obje ct the entity which is a cted u pon o r is cha nged by the a ction 
+Source the startin g position fo r an entity (ie: its positio n befo re the action 
+takes pla ce) 
+Destination the re sulting positio n for a n entity (after the action h as complete d) 
+Location the locatio n for the a ction 
+Instrum ent an obje ct/enti ty used in order to ca use the event (eg: key in "He 
+unlocked the door with a key " 
+Time the time/date of the action 
+ 
+ 
+For exa mple case analy sis of the sentence " Gary repaired the car in the garage on Sun day" 
+could generate the following case fra me: 
+ 
+ Action repairs 
+ Actor Gary  
+ Object car 
+ Location garage 
+ Time Sunday 
+ 
+ 
+With Case G rammars rule s describe sy ntactic constraints but also describe manipulations  
+geared towar ds producing case fra mes (sets of case slots). These may be flat (as in the 
+exam ple above) or nested hierarchical struct ures which can form  the basis of semantic 
+representatio ns. 
+ 
+To implement a Case Grammar th e not ation used to express rules must allow them  to produce 
+case frames ( ie: structures without a pre-dete rmined for m). Grammar notations whose only  
+output  reflects the s yntactic structure of  their in put are not sui table since the y cannot  be used  
+to construct case fra mes. 
+ 
+ 
+ 11 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+3.2. Sem antic Gram mars 
+ 
+Semantic Grammars (also ca lled Do main Specific Grammars) [Rich & Knight]  place no 
+restrictions on the  notations used to describe them  but use rules built around domain specific 
+phrase ty pes rather than typical abstra ct cate gories.  For exam ple, in a m edical dom ain the  
+sentence " there is a bleedi ng ulcer in the stomach towards the les ser curve " the two phrases  
+"in the  stomach " and " towards the lesser curve " might be  classifie d by a  semantic grammar a s 
+a locator-phrase and a loc ation-qualifier respe ctively. In a more general purpose gra mmar  for 
+English these two phrases would be of the same ty pe: prepositional-phrase. 
+ 
+The motivation for doi ng this is that, i n limited domains, grammars can be developed faster 
+by people who are fam iliar with the domain  but are not necessarily  expert l inguists. The  
+problem s of grammar construction are reduced b y allowing it  to focus on  the dom ain an d 
+ignore features of language which are not used. A dditionall y, dom ain experts are more able to  
+help describe (and debug)  suitable grammar rules when the terminology  is more natural  to 
+them . 
+ 
+Unfortunately it is generally recognised that sem antic grammars are more difficult to exten d 
+in order to capture sy ntactic generalisations or to deal with increa singly  com plex/varie d 
+language as the dom ain ex pands. In short dom ain-specific/semanti c grammars d o not scale up  
+well. 
+ 
+Semantic grammars can  be constructed usi ng various different grammar notations b ut 
+typically the result of apply ing a sem antic grammar s reflect s the se mantic str ucture of it s 
+input rather than its sy ntactic structure. To ach ieve th is semantic gra mmars associate semantic 
+actions with each of their gra mmar rules,  any grammar  notation use d with sem antic gra mmars  
+must support this.  
+ 
+ 
+3.3. Definitive Clause Gra mmars (DCGs) 
+ 
+Definitive Clause Grammars [Pereira & Warre n] use rules which are based on logical 
+implication e xpressions. These expressi ons are equivalent to Prolog clauses with the result 
+that a Prolog interpreter can be used as a pa rser for DCGs. An unadapted Pro log in terpreter 
+would perfor m a top-down , depth first p arse which is not particularly efficient. 
+ 
+Rules in DC Gs ar e Horn  clauses whi ch may have multiple ant ecedents but  only  a single 
+consequent. Non-ter minal symbols in the gra mmar a ct as predicat es, for exa mple: 
+ 
+ NounPhrase( N P ) L  Verb Phra se( VP )  ﬁ  Sentence ( append( NP, VP ) ) 
+ 
+In practice DCG rules are written like rules in other grammars (rather t han as logic al 
+expressions) so the rule above could be written: 
+ 
+ Senten ce → NounPhrase VerbPhras e.  
+ 
+Rules are augmented to all ow context sensitive checks to be sp ecified, for exam ple to ensure 
+numeric agre ement betw een subject a nd verb thereby  accepting sentences like "Cats plur 
+play plur with string" while  rejecting others like "Cat sing play plur with string" . Typically  such  
+augmentations might be written: 
+ 
+ Senten ce → NounPhrase(num (n )) Ve rbPhra se(num (n))
+ 
+ 12 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+Additional augmentation allows se mantics to be  asse mbled for the target catego ry of a rule 
+ 
+ Senten ce(se mantics append(s1, s2)) →  
+  NounPhrase(semantic s  (s1)) Ve rbPh rase(semanti cs ( s2) ) 
+ 
+The appeara nce of such rules beco mes more complex when d ifferent augmentations are 
+combined, ie: 
+ 
+ Senten ce (se mantics ap pend(s1, s2)) →  
+  NounPhrase(num (n ), sem antics  (s1)) 
+  VerbPh rase(num (n ), sem antic s  (s2)) 
+ 
+Rules are com plicated further when transfor mations & checks are specified  for se mantic 
+structures. DCGs ar e popular because of their d eclarative sty le but are often associated wit h 
+inefficient parsing strategies. 
+ 
+ 
+3.4. Lexical Functional Grammars (LF Gs) 
+ 
+Lexical gra mmars  present a different ap proach to gramma r/lexicon construction by  removing 
+rules fro m the grammar and em beddi ng them  instead in the lexicon. The justif ication for this 
+is that the valence of words (the num ber and type of other s yntactic groups they associat e 
+with) is a fea ture associat ed with words  rather than their meanings or syntactic classifi cation.  
+The valence of a word defines the legal  struct ure of sentences  it may occur in. For exa mple, 
+the verbs " dined", "ate" a nd "devoured " are a ll part -tense verb f orms and all have sim ilar 
+meanings but (because of their transitivity ) impose different restrictions on sentences they  can 
+be used in. The following sentences illu strate the point: 
+ 
+a.  The guests devoured the m eal. 
+b. * The guests devoured. 
+c. * The guests dined the m eal. 
+d.  The guests dined. 
+e.  The guests ate the meal. 
+f.  The guests ate. 
+ 
+A lexical rule for "ate" would contain t he following k ind of i nformation: 
+ 
+ ate spe cifiers NP type = anima te, participation = mandator y
+ com pleme nts NPtype = food-s tuff, participation = optional
+  
+ 
+This rule states that the word "ate" i s mandatorily specified (prefixed) b y a noun  phrase 
+describing something animate and optionall y complem ented (f ollowed) by a noun phrase 
+describing something which is a food-st uff. 
+ 
+Becaus e lexical gra mmars  have rule like constr uctions occurring inside the lexicon their use 
+imposes different sets of require ments on any s yntax analy ser/parser that im plements the m. 
+This is also true because the stru cture of lexical rules tends to be  different to the  structure of 
+rules used with other grammars, D CGs for exa mple. 
+ 
+Proponents of LFGs cite their elegance in hand ling some co mplexities of language that other 
+grammars struggle to represent and t he way  that specifier/ complement notation can be 
+uniform ly applied to all p arts of speech. Others  claim that LFG s are les s suitable for fast 
+protot yping  small grammars aim ed at restricted  language dom ains and that  lexicons tend  to 
+contain even more duplication than usual. 
+ 13 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+As with many areas of linguistics the choice betw een an LFG ap proach and others is larg ely 
+down to personal preference. Consider the use of  prepositions wit h nouns [Murphy]. Different 
+nouns take di fferent prono uns, eg: 
+ 
+ ...demand for... 
+ ...c ause of... 
+ ...inc rease in... 
+ ...s olution to... 
+ 
+LFGs would handle this by embedding noti ons of  legal pronoun use inside rules attached to  
+the lexical en tries for the nouns concer ned. Other fo rmalisms wo uld attach t ype inform ation 
+to the lexical definitions of pronouns and set s of acceptable pronoun t ypes to definitions of  
+nouns. Gener al purpose gr ammar rules would then be responsible for checking for legal nou n-
+prono un type correspondence. 
+ 
+ 
+3.5. Augm ented Transition Networks (ATNs) 
+ 
+ATNs [Woods 1970]  are usually  described as a hi ghly developed and extended form  of Stat e 
+Transition Network (STN). A basic STN for na tural language would have arcs labelled as 
+some terminal syntactic ca tegory . Recursive Transition Networks (RTNs) are a developm ent 
+of STNs. Th ey consist of  collections of sma ll STNs with arcs which can be labelled wi th 
+names of oth er networks ( non-term inals). ATNs  are a further dev elopment of RTNs which  
+allow arcs to be labelled with tests and actions  which may  bind or reference ATN variables. 
+Fig 2.4  show s a sim ple ATN. 
+ 
+ 
+ 
+S S' S''NounPhrase VerbPhras e 
+VP VP' VP''  Verb NounPhrase Check: N ounPhrase(number) 
+ = VerbP hrase(numbe r) 
+Assign: V erbPhrase(act) → 
+  Senten ce(acti on) 
+Assign: V erb → 
+ VerbPh rase (act) 
+NP NP' NP''  Dete rmine r 
+Noun 
+nil 
+Adjective 
+Fig 2.4. An example of a simple ATN.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 14 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+ 
+ATNs are us ed by parsers which are flexible, typically top-down and can build structures o f 
+arbitrary  complexit y. They were probably the m ost widely  used t ype of grammar in Natural 
+Language Pr ocessing after the success of LUNAR [Woods 1973]  until the m id 1980s. T hey 
+lend the mselves to the co nstruction of powerful gramma rs which do not have to be describ ed 
+in a network-like form alism  but none-t he-less tend t o be more procedural in nature than some 
+other grammars. Since th e 1980s ATN use has dec lined, this has been in part due to some 
+researchers switching to D CGs which a ppear decl arative in sty le and use augm entations based  
+on unification rather than assign ment (as in ATNs ). Others res earchers have  moved awa y 
+from ATN grammars in order to switch to par sers which can employ a grea ter variety  of 
+search strateg y, in these ca ses ther e is o ften so me similarity  between the gra mmars  they  use 
+and ATN grammars. 
+ 
+ 
+3.6. Summary 
+This section has presented an overview of the m ost regularly cited ty pes of gra mma r used i n 
+Natural Language Processing (a branc h of C omputational Linguistics). This list is by no 
+means exhaustive and different approaches are preferred in Pure Linguistics to those 
+commonly used in Com putational Ling uistics. Research effort in Pure Linguist ics is focused  
+in a range of areas (so me of which overlap w ith work in Computational Linguistics),   
+including: 
+ 
+• finding grammatical generalisations which ar e applicable in all human languages and  
+grammar formalisms that are la nguage independent [ Haegeman ]; 
+• formally  specify ing grammars for languages which have not previ ously been analy sed3; 
+• exam ining ho w old langua ges have evolved into m odern languages. 
+ 
+ 
+ 
+The next section exam ines the design and use of semantic repr esentations a nd investigates  
+their use in building grammars and lex icons. A later section describes the ty pe of notations 
+used by  Lkit to define gramma rs and le xicons  which can describe both s yntactic and se mantic 
+rules of a language. 
+ 
+                                                      
+3 A current research pro ject aims to describe a gramm ar for the languag e of the San p eople of the 
+Kalaha ri. The se are  hunter-gat herer people wh ose c ulture had until recen tly re mained largely 
+unaffected  by the main-stream  cultures activ e in th eir geographical region. They are one of the few 
+remaining groups of known p eoples who se language does not exist in any written  form. Specifyin g a 
+written form  for their langua ge is the goal of a large r piece of re searc h. 
+ 15 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+4. Semantics 
+The goal of most NLP4 systems is to extract meaning from  their language inp ut. This meanin g 
+might ultim ately be expres sed as SQL for instan ce if the interface is for a database but in 
+order to generate target  representati ons NLP s ystem s must first create  intermediat e 
+representatio ns to capture and refi ne meanings fro m their  input. Thi s inter mediate 
+representatio n that captures meaning  is the se mantic representation of the s ystem. 
+ 
+In general, se mantic repres entations need to cap ture details of o bjects and their relationships , 
+events and the chains of c ausality  that tie th em together. A detail ed discussion of sem antic 
+representatio ns is be yond the scope of this docum ent but the following section intends to  
+highlight the issues of particular i mportance to  semantic represent ations used specifically  for 
+NLP. 
+ 
+ 
+4.1. Forms of Semantic Rep resentation  
+Any semantic  representatio n can be viewed on three levels: 
+1. The conceptual level: what is rep resented and why. This  level descr ibes the  
+representatio nal capabiliti es. A si mple repr esentat ion may  only  capture details of 
+objects and object-object relationships. A m ore sophisticated representati on m ay 
+capture detail s of events, t heir tim ings, po ssible outc omes and inter-event dependencies. 
+ 
+2. The abstract  form : most  representati ons can  be described in abstract for ms, using 
+diagra ms for example. These diagra ms show what the representation m akes explicit 
+and what must be inferred. The abstract  form shows the structure of the represe ntation 
+and the primitives used t o build it. A bstract  form s are not  determ inistically  derived 
+from  the con ceptual for m. Even  very  simple concept s can be expressed by  a va riety of 
+different abstract form s. Fig 4.1  & 4.2 s how exam ples of this. 
+ 
+3. The phy sical realisation of the repres entation: the i mplementation form , data str uctures 
+and inference  mechanis ms. 
+ 
+ 
+ 
+ 
+Tweety is a bird wings has p arts  
+ 
+ 
+ 
+ 
+ 
+ Fig. 4. 1.. An abstract for m capturing the relationship betwe en Tweet ie and 
+wings   
+ 
+                                                      
+4 Natural Lang uage Processing  
+ 16 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+ 
+ 
+Tweety wings are p art of  
+ 
+ 
+ 
+ 
+ 
+ Fig. 4. 2. An a lternative abstract form  capturing the relationship bet ween 
+Tweetie  and wings   
+ 
+ 
+ 
+ 
+The choice of form  for level 3 has im pact on the capabilities of the abstract rep resentation. A 
+poor choice can li mit its ex pressive power or make it clumsy to use. Som e representations use 
+simple logic for their im plementation form . This  has some advantages: it is well u nderstood, it 
+has precise, unam biguous semantics an d it supports  inference. Ho wever once this choice has 
+been made it imposes r estrictions at leve l 1 & 2 (it is difficult to deal with degre es of truth and 
+the influence of tim e etc). 
+ 
+A major design effort in any  Natural Langua ge Processing  system  is the semantic 
+representatio n. Pioneering work into s uitable representations took place in the 1970s with  
+Wilks' s investigation i nto sem antic pri mitives fo r his translation s ystem  [Wilks] and Schank' s 
+Conceptual Dependency Theory  [Schank] . Wilks  classified objects acco rding to the ir 
+semantic cat egories for exa mple Physi calObjects , AnimateObjects  and Maniplu lableObjects  
+(those that could m ove or be moved). These cl assifi cations were u sed to guide his sy stem in  
+form ing unam biguous descriptions of t he langua ge input. For exam ple given the sentences: 
+ 
+1. The boy ki cked the ball un der the tre e. 
+2. The boy ki cked the wall u nder the tree.  
+ 
+The clas sifica tion of "ball" as a Manipul ableObject  would cause the sy stem  to recognise that 
+the activity  described by  sentence (1) was one of  movement, while the classifi cation of "wall"  
+as a StaticObject  in sentence (2) im plied a striking  activity. 
+ 
+Schank' s Conceptual Dependenc y Theor y reduced a ll verb form s to specialisatio ns of a  small 
+number of pri mitive actio ns (eleven in the or iginal work) which d escribed activities lik e 
+moving a ph ysical ob ject, appl ying a force to an object, inges ting f oodstuf f, etc. Each 
+prim itive acti on had a clearly  defined set of legal uses, known preconditions and known 
+results. For e xample an Actor  could  only move an Object  if the y could  manipulate that object 
+and they  were in the sa me location. The result of moving the Object  would be that both Actor  
+and Object  were at a new l ocation. 
+ 
+In addition the representati on described objects by  a set of object states whi ch took numeric 
+values. For e xample the state Health had a range between +10 (perfect health) and -10 (dead) . 
+The ph ysical condition of an object had a range  from -10 (broken beyond repair ), throug h -5 
+(damaged) to  0. The m ost interesting of these st ates r elate to the mental & emotional states of  
+humans and other intelligent entities, the state of Joy had a ran ge from  -10 to +10 with  -5 
+indicating de pression and +5 indicating happiness. 
+ 
+ 17 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+State values were a ssoci ated with adjec tives a nd adjectival phras es and were also generate d 
+by rules of inference. A rule of inference m ight state for exam ple, the conditions  under which  
+a human could suffer a deterioration in t heir Joy value. 
+ 
+As well as sp ecify ing sets of prim itive acts and states, Conceptual Dependency  defined how 
+these pri mitives could be co mbined to describe more complex co ncepts. In addition to other 
+relationships, Conceptual Depe ndency  explicitly  represented caus al relationships between o ne 
+concept and a nother. A sen tence like " The boy ate a bad apple, it made him sick " would map 
+onto a form  with two sepa rate concepts:  eating-a-b ad-apple  and being-sick  with the second of 
+these being (unintentionally but unavoidably ) caused by the first. 
+ 
+The work of both Schank and Wilks, while da ted in Artificial I ntelligence resear ch ter ms, 
+introduced many  of the ideas still consider ed significant when deve loping semantic 
+representatio ns. Their w ork identifie d the im portance of developing useable se mantic  
+prim itives and m echanisms for grouping these pr imitives into higher level forms. Designer s 
+of lexicons  and grammar s must consider both of these issues: the prim itives and how the y are 
+grouped. 
+ 
+ 
+4.2. Building Semantic Rep resentation s 
+Semantic rep resentations are built from  semantic fra gments attached to words in the lexicon. 
+Semantic rule s contained within gramma r rules descri be how these frag ments ar e combined to 
+form  the se mantics for larger phrases. For exam ple if the target representation for a sentence  
+like " The boy  eats an  apple" is so me thi ng like INGE STS( young-male-hu man, fruit ) and the 
+relevant lexical entries are so mewhat tri vially: 
+ 
+ eats INGEST 
+ bo y youn g-male-hum an 
+ apple fruit 
+ 
+ 
+The (unlikel y) grammar rule below w ould prod uce the required semantics: 
+ 
+ Senten ce → NounPhrase1 Verb NounPhrase2 
+ Semantics: 
+  Verb semantic s( Nou nPhrase1semantic s, NounPhra se2semanti cs ) 
+ 
+ 
+This approach to derivin g semantics by  combining th e action of a num ber of rules is known as 
+"com binatori al semantics".  Language processors can im plement it two way s: 
+1. apply  the relevant se mantic processing each ti me a ne w phrase is for med; 
+2. apply  semantic processing only  when a complete and satisfactory  parse has bee n found 
+for an input sentence. 
+ 
+Each method has its own advantages. Strate gy 1 has an obvious pr ocessing overhead but can  
+generate useful inform ation duri ng t he par se which helps to prevent exploration of 
+semantically  ill-formed phrases. 
+ 
+ 
+ 18 
+Lkit: A Too lkit for Natural Lan guage Interface Con struction 
+   
+4.3. Summary 
+In order for a language processor to do more than check that its in put is sy ntact ically  valid or  
+restructure its input solel y on t he basis of its  synt actic co mposition it m ust be capable of 
+perform ing some analy sis of the meanin g of its input. This is the purpose of semantic analy sis. 
+Semantic des criptions of words are included in the lexicon and rules descri bing the ways 
+these se manti cs can be co mbined and resh aped are i ncluded in the gra mmar.  
+ 
+Proper use of se mantics not only  results in a represent ation of m eaning but m ay also be used 
+to arrive at the correct in terpretation for certain se ntences. The  example pr ovided in the  
+preceding sec tion used se mantic cat egories to interpret the sentence: " the boy kicked the w all 
+under the tree ". 
+ 
+ 
+ 19 
