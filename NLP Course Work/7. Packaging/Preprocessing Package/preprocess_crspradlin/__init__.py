@@ -59,11 +59,14 @@ def remove_stopwords(x):
 def convert_to_base(x):
     return utils._convert_to_base(x)
 
-def remove_common_words(x):
-    return utils._remove_common_words(x)
+def get_word_freq(df, col_nm):
+    return utils._get_word_freq(df, col_nm)
 
-def remove_rare_words(x):
-    return utils._remove_rare_words(x)
+def remove_common_words(x, word_freq, n=20):
+    return utils._remove_common_words(x, word_freq, n)
+
+def remove_rare_words(x, word_freq, n=20):
+    return utils._remove_rare_words(x, word_freq, n)
 
 def spelling_correction(x):
     return utils._spelling_correction(x)

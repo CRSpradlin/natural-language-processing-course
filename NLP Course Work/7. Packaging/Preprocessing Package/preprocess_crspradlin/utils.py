@@ -187,18 +187,18 @@ def _convert_to_base(x):
 
     return ' '.join(base_list)
 
-def _remove_common_words(x, n = 20):
-    x = x.split()
-    word_freq = pd.Series(x).value_counts()
-    fn = word_freq[:n]
+def _get_word_freq(df, col_nm):
+    text = ' '.join(df[col_nm])
+    text = text.split()
+    word_freq = pd.Series(text).value_counts()
+    return word_freq
 
+def _remove_common_words(x, word_freq, n = 20):
+    fn = word_freq[:n]
     return ' '.join([t for t in x.split() if t not in fn])
 
-def _remove_rare_words(x, n = 20):
-    x = x.split()
-    word_freq = pd.Series(x).value_counts()
+def _remove_rare_words(x, word_freq, n = 20):
     fn = word_freq.tail(n)
-
     return ' '.join([t for t in x.split() if t not in fn])
 
 def _spelling_correction(x):
