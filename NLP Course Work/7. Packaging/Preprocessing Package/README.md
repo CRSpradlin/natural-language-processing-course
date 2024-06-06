@@ -5,7 +5,7 @@
 Package Prepared By: CRSpradlin
 
 ## Installation:
-`pip install -e "git+https://github.com/CRSpradlin/natural-language-processing-course.git#egg=preprocess_crspradlin&subdirectory=NLP Course Work/7. Packaging/Preprocessing Package"`
+`pip install "git+https://github.com/CRSpradlin/natural-language-processing-course.git#egg=preprocess_crspradlin&subdirectory=NLP Course Work/7. Packaging/Preprocessing Package"`
 
 ## Uninstall:
 `pip uninstall preprocess_crspradlin`
