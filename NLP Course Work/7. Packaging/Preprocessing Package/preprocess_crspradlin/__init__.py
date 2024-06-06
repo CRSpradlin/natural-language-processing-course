@@ -63,7 +63,7 @@ def remove_common_words(x):
     return utils._remove_common_words(x)
 
 def remove_rare_words(x):
-    return utils.remove_rare_words(x)
+    return utils._remove_rare_words(x)
 
 def spelling_correction(x):
     return utils._spelling_correction(x)
